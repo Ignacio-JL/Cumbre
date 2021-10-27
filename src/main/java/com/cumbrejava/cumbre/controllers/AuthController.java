@@ -30,6 +30,7 @@ public class AuthController {
 			return tokenJwt;
 		}
 		return "fail";
+		
 			
 	}
 
