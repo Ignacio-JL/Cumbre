@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cumbrejava.cumbre.dao.UsuarioDao;
 import com.cumbrejava.cumbre.models.Usuario;
+import com.cumbrejava.cumbre.utils.JWTUtil;
 
 @RestController
 public class AuthController {
@@ -15,11 +16,18 @@ public class AuthController {
 	@Autowired
 	private UsuarioDao usuarioDao;
 	
+	@Autowired
+	private JWTUtil jwtUtil;
+	
 	@RequestMapping(value = "api/login", method = RequestMethod.POST)
 	public String login(@RequestBody Usuario usuario) {
 		
-		if(usuarioDao.verificarEmailPassword(usuario)) {
-			return "ok";
+		Usuario usuarioLogueado = usuarioDao.obtenerUsuarioPorCredenciales(usuario); 
+		
+		if(usuarioLogueado != null) {
+			
+			String tokenJwt = jwtUtil.create(String.valueOf(usuarioLogueado.getId()), usuarioLogueado.getEmail());
+			return tokenJwt;
 		}
 		return "fail";
 			
